@@ -18,7 +18,7 @@ class ParticleTypes:
 
 			particles = Particle.findall(value)
 
-			if len(particles) != 1 and value != "p":
+			if len(particles) != 1 and value not in ["p", "n"]:
 				raise ExceptionAmbiguousParticle(value)
 
 		except ParticleNotFound as err:
@@ -32,7 +32,7 @@ class ParticleTypes:
 
 			particles = Particle.findall(value)
 
-			if len(particles) != 1 and value != "p":
+			if len(particles) != 1 and value not in ["p", "n"]:
 				raise ExceptionAmbiguousParticle(value)
 
 			return particles[0].name
@@ -40,17 +40,18 @@ class ParticleTypes:
 		except ParticleNotFound as err:
 			raise ExceptionUnknownType(value) from err
 
-	def get_particle(self, value):
+def get_particle(self, value):
 
-		'''Get 'Particle' object (see 'particle' library) for a given type.'''
-
-		try:
-			particles = Particle.findall(value)
-
-			if len(particles) != 1 and value != "p":
-				raise ExceptionAmbiguousParticle(value)
-
-			return particles[0]
-
-		except ParticleNotFound as err:
-			raise ExceptionUnknownType(value) from err
+    '''Get 'Particle' object (see 'particle' library) for a given type.'''
+	
+    try:
+        particles = Particle.findall(value)
+        if len(particles) != 1 and value not in ["p", "n"]:
+            raise ExceptionAmbiguousParticle(value)
+        particle = particles[0]
+		
+        if particle.mass is None:
+            raise ExceptionUnknownParticleMass(value)
+        return particle
+    except ParticleNotFound as err:
+        raise ExceptionUnknownType(value) from err
